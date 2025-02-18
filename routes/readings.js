@@ -1,10 +1,11 @@
 
+// We need to require the express module in order to use the Router Files (see explanation in app.js)
 const express = require('express');
 // To use the Router Files, we begin by creating a new constant called readingsRouter and use the express.Router() method to create a new router objects for our readings.
 const readingsRouter = express.Router();
 
 // List of readings with initial items
-// here, we have an array of objects, each object representing a reading
+// here, we have an array of objects, each object representing a book on the reading list
 const readings = [
     { 
         id: 1, 
@@ -33,6 +34,7 @@ const readings = [
 // this function is used to find a book by its id in the array
 // req is the request object, res is the response object and these are used to pass data between middleware functions. 
 // The next function is used to pass control to the next middleware function in the chain.
+// without the next() function, the request will be left hanging and the response will not be sent back to the client
 function findReadingById(req, res, next) {
     // First, we need to convert the value of the request into a number. This is necessary because the id is a number and the request is a string by default
     // we need to convert the id to a number in order to find the book by its id
@@ -61,20 +63,25 @@ function findReadingById(req, res, next) {
 // We add a GET route to return all the readings in the array in the readingsRouter object
 // this route will return all the books in the array by using the .get method
 readingsRouter.get('/readings', (req, res) => {
+    // the .send method is used to send the readings array back as a response
     res.send(readings);
 });
 // this route will then return a book by its id by using the findReadingById function (see above)
 readingsRouter.get('/readings/:id', findReadingById, (req, res) => {
+    // see explanation above for the .send method
     res.send(req.reading);
 });
 
 // ADDING A NEW BOOK
 // Now we need the function to add a new book using .post
 readingsRouter.post('/readings', (req, res) => {
+    // for a new book, we need to get the book data from the request body
+    // we make a constant called reading and assign it the value of the request body
+    // the request body (req.body) is the data that is sent to the server from the client
     const reading = req.body;
     // we need to assign an id to the new book and + 1 to the length of the array
     reading.id = readings.length + 1;
-    // we then push the new book to the array
+    // we then push the new book to the array via the .push method
     readings.push(reading);
 
     // for improved user experience, we respond with a success message and the newly added book
@@ -88,7 +95,7 @@ readingsRouter.post('/readings', (req, res) => {
 // the /readings/:id defines the delete route that is is used to delete a book by its id using the findReadingById function (see above)
 readingsRouter.delete('/readings/:id', findReadingById, (req, res) => {
 
-    // Convert the id to a number in order to find the book by its id
+    // we need to convert the id to a number in order to find the book by its id
     const requestedId = Number(req.params.id);
 
     // Similar to above, we use the array.find method to get the book with the matching id or to see if it is undefined in order to delete it
