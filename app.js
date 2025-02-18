@@ -30,3 +30,6 @@ app.use('/api', readingsRouter);
 app.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}/`);
 });
+
+// Developer: Samuel Park - A00943561
+// Subject: MDIA 4294: Assignment 1
